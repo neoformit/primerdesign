@@ -1,0 +1,18 @@
+PRIMER_TASK=pick_detection_primers
+PRIMER_PICK_LEFT_PRIMER=1
+PRIMER_PICK_INTERNAL_OLIGO=0
+PRIMER_PICK_RIGHT_PRIMER=1
+PRIMER_OPT_SIZE={{ optimum_primer_bp }}
+PRIMER_MIN_SIZE={{ min_primer_bp }}
+PRIMER_MAX_SIZE={{ max_primer_bp }}
+PRIMER_MAX_NS_ACCEPTED=1
+PRIMER_PRODUCT_SIZE_RANGE={{ min_amplicon_bp }}-{{ max_amplicon_bp }}
+P3_FILE_FLAG=0
+PRIMER_EXPLAIN_FLAG=1
+PRIMER_THERMODYNAMIC_PARAMETERS_PATH={{ BASE_DIR }}/design/primer3/src/primer3_config/
+{% for target in targets %}
+=
+SEQUENCE_ID={{ target.name }}
+SEQUENCE_TEMPLATE={{ target.sequence }}
+=
+{% endfor %}
