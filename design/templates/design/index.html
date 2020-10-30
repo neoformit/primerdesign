@@ -1,0 +1,115 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title> Probe library assay design </title>
+    <link rel="stylesheet" href="{% static 'design/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/index.css' %}">
+  </head>
+
+  <body>
+
+    <h1> Assay design for Roche Universal Probe Library (discontinued service) </h1>
+
+    <div class="container summary">
+      <p class="lead">
+        This application was built to replace Roche's "Assay Design Center" which
+        they have announced will be discontinued from the end of 2020. We hope
+        you fill find the functionality of this tool to be similar to the original,
+        and that it allows for the continued use of Roche Universal ProbeLibrary
+        products.
+      </p>
+    </div>
+
+    <br>
+
+    <form action="/" method="post" onsubmit="return validate();">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <div class="row">
+          <div class="col">
+            <h3>
+              Enter FASTA DNA sequence(s) <br>
+              <span class="muted">(multiple sequences accepted)</span>
+            </h3>
+            <br>
+            <small class="mono">
+              e.g. <br>
+              >part of X00351 Human mRNA for beta-actin <br>
+              CACGGCATCGTCACCAACTGGGACGACATGGAGAAAATCTGGCACCACACCTTCTACAATGAGCTGCGTGTGGCTCCCGA <br>
+              GGAGCACCCCGTGCTGCTGACCGAGGCCCCCCTGAACCCCAAGGCCAACCGCGAGAAGATGACCCAGATCATGTTTGAGA <br>
+              CCTTCAACACCCCAGCCATGTACGTTGCTATCCAGGCTGTGCTATCCCTGTACGCCTCTGGCCGTACCACTGGCATCGTG <br>
+              ATGGACTCCGGTGACGGGGTCACCCACACTGTGCCCATCTACGAGGGGTATGCCCTCCCC
+            </small>
+          </div>
+
+          <div class="col">
+            <textarea class="form-control" name="fasta" rows="12" cols="80" placeholder="Paste FASTA sequence(s) here" required>{{ form.fasta.value }}</textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-9">
+          <div class="form-group">
+            <h3> Optional parameters <span class="muted"> (defaults recommended) </span> </h3>
+            <br>
+
+            <h4> Primer length (bp) </h4>
+            <label for="primer_optimum"> Optimum </label>
+            <input type="number" name="primer_optimum" value="{{ form.primer_optimum.value }}"/>
+            <label for="primer_min"> Min </label>
+            <input type="number" name="primer_min" value="{{ form.primer_min.value }}"/>
+            <label for="primer_max"> Max </label>
+            <input type="number" name="primer_max" value="{{ form.primer_max.value }}"/>
+          </div>
+
+          <div class="form-group">
+            <h4> Melting temperate (&#176;C) </h4>
+            <label for="tm_optimum"> Optimum </label>
+            <input type="number" name="tm_optimum" value="{{ form.tm_optimum.value }}"/>
+            <label for="tm_min"> Min </label>
+            <input type="number" name="tm_min" value="{{ form.tm_min.value }}"/>
+            <label for="tm_max"> Max </label>
+            <input type="number" name="tm_max" value="{{ form.tm_max.value }}"/>
+          </div>
+
+          <div class="form-group">
+            <h4> Annealing properties </h4>
+            <label for="self_dimer_any"> Self-dimer (any) </label>
+            <input type="number" name="self_dimer_any" value="{{ form.self_dimer_any.value }}"/>
+            <label for="self_dimer_end"> Self-dimer (3') </label>
+            <input type="number" name="self_dimer_end" value="{{ form.self_dimer_end.value }}"/>
+            <label for="gc_clamp"> GC clamp min </label>
+            <input type="number" name="gc_clamp" value="{{ form.gc_clamp.value }}"/>
+          </div>
+        </div>
+
+        <div class="col-lg-3 text-center">
+          <div class="form-group submit">
+            <button class="btn btn-primary btn-lg" type="submit"> Submit </button>
+          </div>
+        </div>
+      </div>
+
+    </form>
+
+    <footer>
+      <p>
+        Coded with
+        <img src="{% static 'design/img/heart.svg' %}" alt="Heart">
+        by
+        <a href="http://neoformit.com" target="_blank">
+          <img src="{% static 'design/img/neoform.svg' %}" alt="Neoform" style="margin-bottom: 9px;">
+        </a>
+      </p>
+    </footer>
+
+    <script src="{% static 'design/js/jquery-3.5.1.slim.min.js' %}"></script>
+    <script src="{% static 'design/js/bootstrap.min.js' %}"></script>
+  </body>
+
+</html>

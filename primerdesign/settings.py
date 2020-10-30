@@ -16,11 +16,12 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = '&6zt9-fu%_%6l4y34lhjh4u*z+mda@wx6dzr3bx0ay3sqfy!w^'
 DEBUG = True
+SECRET_KEY = '&6zt9-fu%_%6l4y34lhjh4u*z+mda@wx6dzr3bx0ay3sqfy!w^'
 
 ALLOWED_HOSTS = [
-    'localhost'
+    'localhost',
+    '127.0.0.1',
 ]
 
 
@@ -32,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'design',
 ]
 
 MIDDLEWARE = [

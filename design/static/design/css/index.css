@@ -1,0 +1,70 @@
+body {
+  color: #dddddd;
+  background-color: #252b28;
+  padding: 50px;
+  position: relative;
+}
+footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  padding-top: 25px;
+  text-align: center;
+}
+h1 {
+  margin-bottom: 50px;
+}
+small {
+  font-size: 1rem;
+}
+input:focus {
+  outline: none;
+  border: none;
+  box-shadow: 0 0 10px dodgerblue;
+}
+input[type="number"] {
+  padding: 5px;
+  margin: 15px;
+  width: 75px;
+  border-radius: 5px;
+  text-align: center;
+}
+.mono {
+  font-family: monospace;
+}
+.muted {
+  opacity: 0.5;
+}
+.summary {
+  padding: 25px;
+  border: 1px solid #555555;
+  border-radius: 15px;
+}
+div.form-group {
+  padding: 15px;
+  background-color: #353b38;
+  border-radius: 15px;
+}
+div.row {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+div.submit {
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.submit button.btn-primary {
+  display: block;
+  font-size: 2rem;
+  border-radius: 15px;
+  border-width: 3px;
+}
+footer img {
+  display: inline;
+  height: 2rem;
+}

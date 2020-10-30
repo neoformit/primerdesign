@@ -49,6 +49,7 @@ class PrimerDesign:
 
     def run(self, params):
         """Analyse the target sequence with primer3."""
+        # TODO: Need to figure out how to consider more than 25 primer pairs...
         input_path = self.create_input(params)
         args = [
             settings.PRIMER3_PATH,
