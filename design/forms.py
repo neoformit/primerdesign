@@ -1,3 +1,9 @@
+"""Primer3 input form.
+
+For details on input params see:
+https://primer3.org/manual.html#globalTags
+"""
+
 from django import forms
 from .fasta import Fasta
 
@@ -10,6 +16,9 @@ class PrimerForm(forms.Form):
     primer_min = forms.IntegerField(initial=18)
     primer_max = forms.IntegerField(initial=27)
     primer_optimum = forms.IntegerField(initial=20)
+    # Amplicon size range
+    amplicon_min = forms.IntegerField(initial=30)
+    amplicon_max = forms.IntegerField(initial=1500)
     # Primer melting temperature range
     tm_min = forms.FloatField(initial=59)
     tm_max = forms.FloatField(initial=61)
@@ -18,7 +27,8 @@ class PrimerForm(forms.Form):
     self_dimer_any = forms.FloatField(initial=8.0)
     # Max self complement 3'
     self_dimer_end = forms.FloatField(initial=3.0)
-    # GC clamp
+    # GC content
+    gc_min = forms.IntegerField(initial=45)
     gc_clamp = forms.IntegerField(initial=0)
 
     def clean(self):

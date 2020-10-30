@@ -33,9 +33,11 @@
           <div class="col">
             <h3>
               Enter FASTA DNA sequence(s) <br>
-              <span class="muted">(multiple sequences accepted)</span>
             </h3>
+
+            <p class="lead muted">(multiple sequences accepted)</p>
             <br>
+
             <small class="mono">
               e.g. <br>
               >part of X00351 Human mRNA for beta-actin <br>
@@ -47,7 +49,7 @@
           </div>
 
           <div class="col">
-            <textarea class="form-control" name="fasta" rows="12" cols="80" placeholder="Paste FASTA sequence(s) here" required>{{ form.fasta.value }}</textarea>
+            <textarea class="form-control fasta mono" name="fasta" rows="12" cols="80" placeholder="Paste FASTA sequence(s) here" required>{{ form.fasta.value }}</textarea>
           </div>
         </div>
       </div>
@@ -55,7 +57,11 @@
       <div class="row">
         <div class="col-lg-9">
           <div class="form-group">
-            <h3> Optional parameters <span class="muted"> (defaults recommended) </span> </h3>
+            <h3>
+              Optional parameters
+              <span class="muted"> (defaults recommended) </span>
+              <span class="small float-right"><a href="https://primer3.org/manual.html#globalTags" target="_blank">Primer3 input parameters</a></span>
+            </h3>
             <br>
 
             <h4> Primer length (bp) </h4>
@@ -79,12 +85,14 @@
 
           <div class="form-group">
             <h4> Annealing properties </h4>
+            <label for="gc_min"> GC min % </label>
+            <input type="number" name="gc_min" value="{{ form.gc_min.value }}"/>
+            <label for="gc_clamp"> GC clamp </label>
+            <input type="number" name="gc_clamp" value="{{ form.gc_clamp.value }}"/>
             <label for="self_dimer_any"> Self-dimer (any) </label>
             <input type="number" name="self_dimer_any" value="{{ form.self_dimer_any.value }}"/>
             <label for="self_dimer_end"> Self-dimer (3') </label>
             <input type="number" name="self_dimer_end" value="{{ form.self_dimer_end.value }}"/>
-            <label for="gc_clamp"> GC clamp min </label>
-            <input type="number" name="gc_clamp" value="{{ form.gc_clamp.value }}"/>
           </div>
         </div>
 

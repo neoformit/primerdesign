@@ -14,10 +14,14 @@ footer {
   text-align: center;
 }
 h1 {
+  text-align: center;
   margin-bottom: 50px;
 }
 small {
   font-size: 1rem;
+}
+textarea.fasta {
+  font-size: 1.2rem;
 }
 input:focus {
   outline: none;
@@ -30,6 +34,9 @@ input[type="number"] {
   width: 75px;
   border-radius: 5px;
   text-align: center;
+}
+.small {
+  font-size: 1rem;
 }
 .mono {
   font-family: monospace;

@@ -4,8 +4,8 @@ import os
 import string
 import random
 import subprocess
-# from django.conf import settings
-# from django.template.loader import render_to_string
+from django.conf import settings
+from django.template.loader import render_to_string
 
 
 class PrimerDesign:

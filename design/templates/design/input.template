@@ -2,17 +2,25 @@ PRIMER_TASK=pick_detection_primers
 PRIMER_PICK_LEFT_PRIMER=1
 PRIMER_PICK_INTERNAL_OLIGO=0
 PRIMER_PICK_RIGHT_PRIMER=1
-PRIMER_OPT_SIZE={{ optimum_primer_bp }}
-PRIMER_MIN_SIZE={{ min_primer_bp }}
-PRIMER_MAX_SIZE={{ max_primer_bp }}
+PRIMER_OPT_SIZE={{ primer_optimum }}
+PRIMER_MIN_SIZE={{ primer_min }}
+PRIMER_MAX_SIZE={{ primer_max }}
+PRIMER_MAX_SELF_ANY={{ self_dimer_any }}
+PRIMER_MAX_SELF_END={{ self_dimer_end }}
+PRIMER_OPT_TM={{ tm_optimum }}
+PRIMER_MIN_TM={{ tm_min }}
+PRIMER_MAX_TM={{ tm_max }}
+PRIMER_GC_CLAMP={{ gc_clamp }}
+PRIMER_MIN_GC={{ gc_min }}
 PRIMER_MAX_NS_ACCEPTED=1
-PRIMER_PRODUCT_SIZE_RANGE={{ min_amplicon_bp }}-{{ max_amplicon_bp }}
+PRIMER_NUM_RETURN=500
+PRIMER_PRODUCT_SIZE_RANGE={{ amplicon_min }}-{{ amplicon_max }}
 P3_FILE_FLAG=0
 PRIMER_EXPLAIN_FLAG=1
 PRIMER_THERMODYNAMIC_PARAMETERS_PATH={{ BASE_DIR }}/design/primer3/src/primer3_config/
-{% for target in targets %}
 =
-SEQUENCE_ID={{ target.name }}
-SEQUENCE_TEMPLATE={{ target.sequence }}
+{% for name, sequence in fasta.items %}
+SEQUENCE_ID={{ name }}
+SEQUENCE_TEMPLATE={{ sequence }}
 =
 {% endfor %}

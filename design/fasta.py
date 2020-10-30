@@ -1,5 +1,20 @@
 """Read fasta sequence string into a useful object."""
 
+from django.core.exceptions import ValidationError
+
+DNA = {'A', 'T', 'G', 'C'}
+
+
+def valid_dna(title, residue, sequence):
+    """Assert that sequence string is valid DNA."""
+    if len(set(sequence) - DNA):
+        invalid = list(set(sequence) - DNA)[0]
+        char_count = residue + sequence.index(invalid) + 1
+        raise ValidationError({'fasta': (
+            f'Sequence "{title}": Invalid DNA residue "{invalid}"'
+            ' at position {char_count}'
+        )})
+
 
 class Fasta:
     """Parse fasta string and validate sequence."""
@@ -49,6 +64,7 @@ class Fasta:
     @classmethod
     def from_string(Cls, string):
         """Read in from string and parse to dict."""
+        residue = 0
         seq = ""
         title = ""
         fas = {}
@@ -62,7 +78,10 @@ class Fasta:
                 copy = True
                 seq = ""
             else:
-                seq += line.strip("\n\r ")
+                line = line.strip("\n\r ")
+                if valid_dna(title, residue, line):
+                    seq += line
+                    residue += len(line)
 
         # Ensure duplicate fasta titles don't get overwritten
         i = 1

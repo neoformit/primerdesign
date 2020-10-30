@@ -1,7 +1,6 @@
 """Provide user interface for requesting primer design analysis."""
 
 from django.shortcuts import render
-# from django.core.exceptions import SuspiciousOperation
 from .primer import PrimerDesign
 from .forms import PrimerForm
 

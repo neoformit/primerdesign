@@ -115,11 +115,19 @@ PRIMER3_PATH = os.path.join(
     'design',
     'primer3',
     'src',
-    'primer3-core'
+    'primer3_core'
 )
 PRIMER3_INPUT_PATH = os.path.join(
     BASE_DIR,
     'design',
     'primer3',
     'input.conf'
+)
+assert os.path.exists(PRIMER3_PATH), (
+    f"Primer3 executable could not be found at settings.PRIMER3_PATH:"
+    + f" { PRIMER3_PATH }"
+)
+assert os.path.exists(os.path.dirname(PRIMER3_INPUT_PATH)), (
+    f"Directory must exists for settings.PRIMER3_INPUT_PATH:"
+    + f" { os.path.dirname(PRIMER3_INPUT_PATH) }"
 )
