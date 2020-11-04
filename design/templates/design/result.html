@@ -1,0 +1,95 @@
+{% load static %}
+{% load humanize %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title> Probe library assay design </title>
+    <link rel="stylesheet" href="{% static 'design/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/result.css' %}">
+  </head>
+
+  <body>
+
+    <h1> Assay design results </h1>
+
+    <div class="container results">
+
+      {% for query in queries %}
+      <div class="result">
+        <p class="heading">
+          Query "{{ query.name }}" <br>
+          {{ query.assays|length|apnumber }} potential assays were found
+        </p>
+
+        {% for assay in query.assays %}
+        <div class="assay">
+          <p class="lead">Universal ProbeLibrary probe: #{{ assay.probe.id }}</p>
+
+          <table>
+            <tr>
+              <th>Primer</th>
+              <th>Length</th>
+              <th>Position</th>
+              <th>Tm</th>
+              <th>GC%</th>
+              <th class="sequence">Sequence</th>
+            </tr>
+
+            <tr>
+              <td>Left</td>
+              <td> {{ assay.left.length }} </td>
+              <td> {{ assay.left.start }} - {{ assay.left.end }} </td>
+              <td> {{ assay.left.tm|floatformat:1 }} </td>
+              <td> {{ assay.left.gc|floatformat:1 }} </td>
+              <td class="sequence"> {{ assay.left.sequence }} </td>
+            </tr>
+
+            <tr>
+              <td>Right</td>
+              <td> {{ assay.right.length }} </td>
+              <td> {{ assay.right.start }} - {{ assay.left.end }} </td>
+              <td> {{ assay.right.tm|floatformat:1 }} </td>
+              <td> {{ assay.right.gc|floatformat:1 }} </td>
+              <td class="sequence"> {{ assay.right.sequence }} </td>
+            </tr>
+
+            <tr>
+              <td class="space"></td>
+            </tr>
+
+            <tr>
+              <th class="amplicon" colspan=6>Amplicon ({{ assay.amplicon_bp }} nt)</th>
+            </tr>
+
+            <tr>
+              <td colspan=6>{{ assay.amplicon }}</td>
+            </tr>
+          </table>
+
+          <p class="lead"> Primer/probe alignment: </p>
+          <pre>{{ assay }}</pre>
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+
+    </div>
+
+    <footer>
+      <p>
+        Coded with
+        <img src="{% static 'design/img/heart.svg' %}" alt="Heart">
+        by
+        <a href="http://neoformit.com" target="_blank">
+          <img src="{% static 'design/img/neoform.svg' %}" alt="Neoform" style="margin-bottom: 9px;">
+        </a>
+      </p>
+    </footer>
+
+    <script src="{% static 'design/js/jquery-3.5.1.slim.min.js' %}"></script>
+    <script src="{% static 'design/js/bootstrap.min.js' %}"></script>
+  </body>
+
+</html>

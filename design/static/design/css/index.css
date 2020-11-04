@@ -3,6 +3,7 @@ body {
   background-color: #252b28;
   padding: 50px;
   position: relative;
+  min-height: 100vh;
 }
 footer {
   position: absolute;
@@ -20,6 +21,10 @@ h1 {
 small {
   font-size: 1rem;
 }
+label {
+  text-align: right;
+  min-width: 75px;
+}
 textarea.fasta {
   font-size: 1.2rem;
 }
@@ -30,7 +35,7 @@ input:focus {
 }
 input[type="number"] {
   padding: 5px;
-  margin: 15px;
+  margin: 15px 50px 15px 15px;
   width: 75px;
   border-radius: 5px;
   text-align: center;

@@ -17,8 +17,8 @@ class PrimerForm(forms.Form):
     primer_max = forms.IntegerField(initial=27)
     primer_optimum = forms.IntegerField(initial=20)
     # Amplicon size range
-    amplicon_min = forms.IntegerField(initial=30)
-    amplicon_max = forms.IntegerField(initial=1500)
+    amplicon_min = forms.IntegerField(initial=50)
+    amplicon_max = forms.IntegerField(initial=600)
     # Primer melting temperature range
     tm_min = forms.FloatField(initial=59)
     tm_max = forms.FloatField(initial=61)
@@ -28,7 +28,7 @@ class PrimerForm(forms.Form):
     # Max self complement 3'
     self_dimer_end = forms.FloatField(initial=3.0)
     # GC content
-    gc_min = forms.IntegerField(initial=45)
+    gc_min = forms.FloatField(initial=20.0)
     gc_clamp = forms.IntegerField(initial=0)
 
     def clean(self):

@@ -13,14 +13,13 @@ PRIMER_MAX_TM={{ tm_max }}
 PRIMER_GC_CLAMP={{ gc_clamp }}
 PRIMER_MIN_GC={{ gc_min }}
 PRIMER_MAX_NS_ACCEPTED=1
-PRIMER_NUM_RETURN=500
-PRIMER_PRODUCT_SIZE_RANGE={{ amplicon_min }}-{{ amplicon_max }}
+PRIMER_NUM_RETURN=50
+PRIMER_PRODUCT_SIZE_RANGE={{ product_size_range }}
 P3_FILE_FLAG=0
 PRIMER_EXPLAIN_FLAG=1
-PRIMER_THERMODYNAMIC_PARAMETERS_PATH={{ BASE_DIR }}/design/primer3/src/primer3_config/
-=
-{% for name, sequence in fasta.items %}
+PRIMER_THERMODYNAMIC_PARAMETERS_PATH={{ conf_path }}
+={% for name, template in fasta.items %}
 SEQUENCE_ID={{ name }}
-SEQUENCE_TEMPLATE={{ sequence }}
+SEQUENCE_TEMPLATE={{ template }}
 =
 {% endfor %}

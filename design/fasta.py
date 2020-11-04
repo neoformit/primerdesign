@@ -2,6 +2,9 @@
 
 from django.core.exceptions import ValidationError
 
+import logging
+logger = logging.getLogger('django')
+
 DNA = {'A', 'T', 'G', 'C'}
 
 
@@ -9,18 +12,21 @@ def valid_dna(title, residue, sequence):
     """Assert that sequence string is valid DNA."""
     if len(set(sequence) - DNA):
         invalid = list(set(sequence) - DNA)[0]
-        char_count = residue + sequence.index(invalid) + 1
-        raise ValidationError({'fasta': (
+        position = residue + sequence.index(invalid) + 1
+        msg = (
             f'Sequence "{title}": Invalid DNA residue "{invalid}"'
-            ' at position {char_count}'
-        )})
+            + f' at position {position}'
+        )
+        logger.info(f"FASTA failed form validation:\n{msg}")
+        raise ValidationError({'fasta': msg})
+    return True
 
 
 class Fasta:
     """Parse fasta string and validate sequence."""
 
     def __init__(self, data):
-        """Read in FASTSA sequences as dict."""
+        """Read in FASTA sequences as dict."""
         self.sequences = data
         self.index = list(data.keys())
 
@@ -40,6 +46,19 @@ class Fasta:
             writeList.append('>' + title + '\n' + '\n'.join(seqList))
 
         return '\n'.join(writeList)
+
+    def __iter__(self):
+        """Iterate through result sequences."""
+        self.ix = 0
+        return self
+
+    def __next__(self):
+        """Return next sequence in iteration."""
+        if self.ix < len(self.index):
+            this = self.sequences[self.index[self.ix]]
+            self.ix += 1
+            return this
+        raise StopIteration
 
     def __getitem___(self, ix):
         """Return sequence at index."""
@@ -74,7 +93,7 @@ class Fasta:
             if line.startswith('>'):
                 if copy:
                     fas[title] = seq
-                title = line.strip(">\n\r ")
+                title = line.strip(">\n\r ").replace(' ', '_')
                 copy = True
                 seq = ""
             else:
@@ -91,3 +110,16 @@ class Fasta:
         fas[title] = seq
 
         return Cls(fas)
+
+if __name__ == '__main__':
+    fasta_str = (
+        '>part of X00351 Human mRNA for beta-actin\r\n'
+        'CACGGCATCGTCACCAACTGGGACGACATGGAGAAAATCTGGCACCACACCTTCTACAATGAGCTGCGTGTGGCTCCCGA\r\n'
+        'GGAGCACCCCGTGCTGCTGACCGAGGCCCCCCTGAACCCCAAGGCCAACCGCGAGAAGATGACCCAGATCATGTTTGAGA\r\n'
+        'CCTTCAACACCCCAGCCATGTACGTTGCTATCCAGGCTGTGCTATCCCTGTACGCCTCTGGCCGTACCACTGGCATCGTG\r\n'
+        'ATGGACTCCGGTGACGGGGTCACCCACACTGTGCCCATCTACGAGGGGTATGCCCTCCCC'
+    )
+    fas = Fasta.from_string(fasta_str)
+    for key, seq in fas.items():
+        assert seq in fasta_str.replace('\r\n', '')
+    print(fas)

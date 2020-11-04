@@ -28,6 +28,8 @@
     <form action="/" method="post" onsubmit="return validate();">
       {% csrf_token %}
 
+      {{ form.errors }}
+
       <div class="form-group">
         <div class="row">
           <div class="col">
@@ -64,13 +66,21 @@
             </h3>
             <br>
 
-            <h4> Primer length (bp) </h4>
+            <h4> Primer length (nt) </h4>
             <label for="primer_optimum"> Optimum </label>
             <input type="number" name="primer_optimum" value="{{ form.primer_optimum.value }}"/>
             <label for="primer_min"> Min </label>
             <input type="number" name="primer_min" value="{{ form.primer_min.value }}"/>
             <label for="primer_max"> Max </label>
             <input type="number" name="primer_max" value="{{ form.primer_max.value }}"/>
+          </div>
+
+          <div class="form-group">
+            <h4> Amplicon length (nt) </h4>
+            <label for="amplicon_min"> Min </label>
+            <input type="number" name="amplicon_min" value="{{ form.amplicon_min.value }}"/>
+            <label for="amplicon_max"> Max </label>
+            <input type="number" name="amplicon_max" value="{{ form.amplicon_max.value }}"/>
           </div>
 
           <div class="form-group">
