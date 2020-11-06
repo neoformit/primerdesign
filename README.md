@@ -12,18 +12,23 @@ Deployment - development
 
 Clone the repo to home directory and install dependancies:
 
-'''bash
+```bash
 git clone https://github.com/pluckthechicken/primerdesign.git
 cd primerdesign
 pip install requirements.txt
 ./setup.sh
 python manage.py migrate
-'''
+```
 
 Run development server (`--insecure` allows local static file serving)
+
 `python manage.py runserver --insecure`
 
 Deployment - production
 ------
 
-This get a little more complex due to setting up the webserver etc. I'm currently running this with Nginx reverse-proxying for Gunicorn. It doesn't need anything special in the server config as it's a single-page app with short request times.
+This get a little more complex due to setting up the webserver etc.
+
+I'm currently running this with Nginx reverse-proxying for Gunicorn.
+
+It doesn't need anything special in the server config as it's a single-page app with short request times.
