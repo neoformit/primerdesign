@@ -3,6 +3,7 @@ Design primers to use with Roche's fluorescent probe libraries
 
 Check out a running example at [primers.neoformit.com](http://primers.neoformit.com/)
 
+
 Development setup
 ------
 
@@ -23,6 +24,7 @@ python manage.py migrate
 Run development server (`--insecure` allows local static file serving)
 
 `python manage.py runserver --insecure`
+
 
 Production deployment
 ------
