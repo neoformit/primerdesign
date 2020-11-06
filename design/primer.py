@@ -10,6 +10,13 @@ from django.template.loader import render_to_string
 import logging
 logger = logging.getLogger('django')
 
+COMPLEMENT = {
+    'A': 'T',
+    'T': 'A',
+    'G': 'C',
+    'C': 'G',
+}
+
 PRODUCT_SIZE_RANGES = [
     (101, 200),
     (201, 300),
@@ -269,14 +276,8 @@ class AssayBuilder:
 
         def reverse_complement(sequence):
             """Return reverse complement of sequence."""
-            COMP = {
-                'A': 'T',
-                'T': 'A',
-                'G': 'C',
-                'C': 'G',
-            }
             return ''.join([
-                COMP[nt] for nt in sequence[::-1].upper()
+                COMPLEMENT[nt] for nt in sequence[::-1].upper()
             ])
 
         probes = []
