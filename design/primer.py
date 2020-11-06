@@ -267,22 +267,35 @@ class AssayBuilder:
                 len(self.amplicon_inner) - inner_end
             ])
 
+        def reverse_complement(sequence):
+            """Return reverse complement of sequence."""
+            COMP = {
+                'A': 'T',
+                'T': 'A',
+                'G': 'C',
+                'C': 'G',
+            }
+            return ''.join([
+                COMP[nt] for nt in sequence[::-1].upper()
+            ])
+
         probes = []
 
-        for probe_ix, probe in settings.UPL_PROBES.items():
-            if probe in self.amplicon_inner:
-                # Convert 0-index to 1-index
-                start = self.query.sequence.find(probe) + 1
-                distance = get_probe_distance(self, probe)
-                if distance < settings.MIN_PROBE_DISTANCE:
-                    continue
-                probes.append({
-                    'id': probe_ix,
-                    'sequence': probe,
-                    'start': start,
-                    'end': start + len(probe),
-                    'distance': distance,
-                })
+        for probe_ix, probe_seq in settings.UPL_PROBES.items():
+            for probe in [probe_seq, reverse_complement(probe_seq)]:
+                if probe in self.amplicon_inner:
+                    # Convert 0-index to 1-index
+                    start = self.query.sequence.find(probe) + 1
+                    distance = get_probe_distance(self, probe)
+                    if distance < settings.MIN_PROBE_DISTANCE:
+                        continue
+                    probes.append({
+                        'id': probe_ix,
+                        'sequence': probe,
+                        'start': start,
+                        'end': start + len(probe),
+                        'distance': distance,
+                    })
         return sorted(probes, key=get_distance, reverse=True)
 
     def build(self):
@@ -343,31 +356,16 @@ class Assay:
 
 if __name__ == '__main__':
 
-    def parse_output(output):
-        """Parse string output from primer3 into useful properties."""
-        return [
-            Iteration(x)
-            for x in output.split('\n=\n')
-            if x.startswith('SEQUENCE_ID')
-        ]
-
-    with open('primer3/example.out') as f:
-        iterations = parse_output(f.read())
-    probes = [
-        ''.join([
-            random.choice(['A', 'T', 'G', 'C'])
-            for x in range(8)
+    def reverse_comp(sequence):
+        """Return reverse complement of sequence."""
+        COMP = {
+            'A': 'T',
+            'T': 'A',
+            'G': 'C',
+            'C': 'G',
+        }
+        return ''.join([
+            COMP[nt] for nt in sequence[::-1].upper()
         ])
-        for i in range(20)
-    ]
-    pairs = [
-        primer_pair for primer_pair in iterations[0].primers
-        if [
-            p for p in probes
-            if p in primer_pair.amplicon
-        ]
-    ]
-    print(
-        f"{ len(pairs) } primer pairs found",
-        f"for n={ len(probes) } probe library"
-    )
+
+    print(reverse_comp('TCGATCGACACTAGCATTAGC'))
