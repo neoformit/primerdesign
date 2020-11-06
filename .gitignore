@@ -1,5 +1,7 @@
 # App-specific
 *.pkl
+design/primer3/
+primerdesign/static/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
