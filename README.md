@@ -7,6 +7,7 @@ Deployment - development
 ------
 
 > Tested on Linux Ubuntu 20.04 with Python 3.8 runtime
+
 > Recommend installing in virtual environment
 
 Clone the repo to home directory and install dependancies:
