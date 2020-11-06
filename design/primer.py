@@ -1,7 +1,6 @@
 """A wrapper around the primer3 software."""
 
 import os
-import json
 import string
 import random
 import subprocess
