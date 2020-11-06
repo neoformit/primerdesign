@@ -12,20 +12,33 @@
 
   <body>
 
-    <h1> Assay design results </h1>
+    <h1> UPL assay design results </h1>
 
-    <div class="container results">
+    <div class="container text-center">
+      <a class="btn btn-primary" href="/"> New assay </a>
+    </div>
 
-      {% for query in queries %}
+    <br><br>
+
+    <div class="container">
+
+      {% for query in result %}
       <div class="result">
-        <p class="heading">
-          Query "{{ query.name }}" <br>
-          {{ query.assays|length|apnumber }} potential assays were found
+        <p class="heading bright">
+          Query #{{ forloop.counter }}: {{ query.name }} <br><br>
+          <span class="smaller">
+            {{ query.assays|length|apnumber|title }} potential assays were found for
+            <span class="green"> UPL probes: </span>
+            {% for probe_id in query.get_probe_ids %}
+            <a class="probe-id" href="#probe-{{probe_id}}"> #{{ probe_id }} </a>
+            {% endfor %}
+          </span>
         </p>
 
         {% for assay in query.assays %}
-        <div class="assay">
-          <p class="lead">Universal ProbeLibrary probe: #{{ assay.probe.id }}</p>
+        <div class="assay" id="probe-{{ assay.probe.id }}">
+          <p class="lead bright bigger">Assay #{{ forloop.counter }}</p>
+          <p class="lead green">UPL probe <span class="probe-id"> #{{ assay.probe.id }} </span></p>
 
           <table>
             <tr>
@@ -49,7 +62,7 @@
             <tr>
               <td>Right</td>
               <td> {{ assay.right.length }} </td>
-              <td> {{ assay.right.start }} - {{ assay.left.end }} </td>
+              <td> {{ assay.right.start }} - {{ assay.right.end }} </td>
               <td> {{ assay.right.tm|floatformat:1 }} </td>
               <td> {{ assay.right.gc|floatformat:1 }} </td>
               <td class="sequence"> {{ assay.right.sequence }} </td>
@@ -69,7 +82,7 @@
           </table>
 
           <p class="lead"> Primer/probe alignment: </p>
-          <pre>{{ assay }}</pre>
+          <pre>{{ assay|safe }}</pre>
         </div>
         {% endfor %}
       </div>

@@ -41,7 +41,6 @@ class PrimerDesign:
         """Run primer3 with the given target sequences and render output."""
         self.params = params
         self.iterations = self.run(params)
-        self.filter_probe_assays()
 
     def __str__(self):
         """Render entire result to string."""
@@ -85,13 +84,6 @@ class PrimerDesign:
                 for i in range(12)
             ])
         )
-        logger.info(
-            "Creating Primer3 input with FASTA:\n"
-            + '\n\n'.join([
-                f"Query: {k}\nSequence:{v}"
-                for k, v in params['fasta'].items()
-            ])
-        )
         params['product_size_range'] = get_size_range(params)
         params['conf_path'] = settings.PRIMER3_CONFIG_PATH
         with open(input_path, 'w') as f:
@@ -123,60 +115,6 @@ class PrimerDesign:
             for x in result.stdout.decode('utf-8').split('\n=\n')
             if x.startswith('SEQUENCE_ID')
         ]
-
-    def filter_probe_assays(self):
-        """Cross-reference against UPL sequences to get probe assays."""
-        def get_distance(probe):
-            """Return probe distance."""
-            return probe['distance']
-
-        def get_probe_distance(sequence, start, assay):
-            """Return the minimum distance of probe from amplicon 5' or 3'."""
-            return min([
-                start,
-                len(assay.amplicon_inner) - start + len(sequence)
-            ])
-
-        def reduced(assays):
-            """Return only 5 assays per probe."""
-            reduced = []
-            probe_count = {}
-            for assay in assays:
-                if not assay.probe:
-                    continue
-                probe_id = assay.probe['id']
-                if probe_id not in probe_count:
-                    probe_count[probe_id] = 1
-                    reduced.append(assay)
-                    continue
-                if probe_count[probe_id] < 5:
-                    probe_count[probe_id] += 1
-                    reduced.append(assay)
-            return reduced
-
-        with open(settings.PROBE_SEQUENCE_PATH) as f:
-            probes = json.load(f)
-
-        for query in self.iterations:
-            for assay in query.assays:
-                for probe_ix, sequence in probes.items():
-                    if sequence in assay.amplicon_inner:
-                        start = assay.amplicon_inner.find(sequence)
-                        distance = get_probe_distance(sequence, start, assay)
-                        if distance < 5:
-                            continue
-                        assay.probes.append({
-                            'id': probe_ix,
-                            'sequence': sequence,
-                            'start': start,
-                            'end': start + len(sequence),
-                            'distance': distance,
-                        })
-                if len(assay.probes) > 1:
-                    assay.probes.sort(key=get_distance, reverse=True)
-                if assay.probes:
-                    assay.probe = assay.probes[0]
-            query.assays = reduced(query.assays)
 
 
 class Iteration:
@@ -212,6 +150,23 @@ class Iteration:
             except IndexError:
                 return False
 
+        def reduced(assays):
+            """Return only 5 assays per probe."""
+            reduced = []
+            probe_count = {}
+            for assay in assays:
+                if not assay.probe:
+                    continue
+                probe_id = assay.probe['id']
+                if probe_id not in probe_count:
+                    probe_count[probe_id] = 1
+                    reduced.append(assay)
+                    continue
+                if probe_count[probe_id] < 5:
+                    probe_count[probe_id] += 1
+                    reduced.append(assay)
+            return reduced
+
         i = 0
         assays = []
         while data.get(f'PRIMER_LEFT_{ i }_SEQUENCE'):
@@ -219,25 +174,48 @@ class Iteration:
                 k: v for k, v in data.items()
                 if key_matches_index(i, k)
             }
-            assays.append(Assay(self, i, assay_data, sequence_template))
+            builder = AssayBuilder(self, i, assay_data, sequence_template)
+            assays += builder.build()
             i += 1
 
-        return assays
+        return reduced(assays)
+
+    def get_probe_ids(self):
+        """Return unique list of probe IDs sorted numerically."""
+        return [
+            str(x)
+            for x in sorted(
+                list(
+                    {
+                        int(assay.probe['id'])
+                        for assay in self.assays
+                    }
+                )
+            )
+        ]
+
+    def get_probes_string(self):
+        """Return string list of probe IDs."""
+        probe_ids = self.get_probe_ids()
+        if len(probe_ids) == 1:
+            return "probe #" + probe_ids[0]
+        elif len(probe_ids) > 1:
+            return 'probes #' + ', #'.join(probe_ids)
 
 
-class Assay:
-    """Holds information about a potential primer pair."""
+class AssayBuilder:
+    """A PCR assay with potentially multiple probe sites."""
 
     def __init__(self, parent, ix, data, sequence_template):
         """Parse details from output string."""
         self.query = parent
-        self.index = ix
+        self.index = ix + 1
         self.left = {
             'penalty': float(data[f'PRIMER_LEFT_{ ix }_PENALTY']),
             'sequence': data[f'PRIMER_LEFT_{ ix }_SEQUENCE'],
             'start': int(data[f'PRIMER_LEFT_{ ix }'].split(',')[0]),
-            'end': int(data[f'PRIMER_LEFT_{ ix }'].split(',')[0]
-                       + data[f'PRIMER_LEFT_{ ix }'].split(',')[1]),
+            'end': (int(data[f'PRIMER_LEFT_{ ix }'].split(',')[0])
+                    + int(data[f'PRIMER_LEFT_{ ix }'].split(',')[1])),
             'length': int(data[f'PRIMER_LEFT_{ ix }'].split(',')[1]),
             'tm': float(data[f'PRIMER_LEFT_{ ix }_TM']),
             'gc': float(data[f'PRIMER_LEFT_{ ix }_GC_PERCENT']),
@@ -251,9 +229,9 @@ class Assay:
         self.right = {
             'penalty': float(data[f'PRIMER_RIGHT_{ ix }_PENALTY']),
             'sequence': data[f'PRIMER_RIGHT_{ ix }_SEQUENCE'],
-            'start': int(data[f'PRIMER_RIGHT_{ ix }'].split(',')[0]),
-            'end': int(data[f'PRIMER_RIGHT_{ ix }'].split(',')[0]
-                       + data[f'PRIMER_RIGHT_{ ix }'].split(',')[1]),
+            'start': (int(data[f'PRIMER_RIGHT_{ ix }'].split(',')[0])
+                      + 2 - int(data[f'PRIMER_RIGHT_{ ix }'].split(',')[1])),
+            'end': int(data[f'PRIMER_RIGHT_{ ix }'].split(',')[0]) + 1,
             'length': int(data[f'PRIMER_RIGHT_{ ix }'].split(',')[1]),
             'tm': float(data[f'PRIMER_RIGHT_{ ix }_TM']),
             'gc': float(data[f'PRIMER_RIGHT_{ ix }_GC_PERCENT']),
@@ -268,41 +246,92 @@ class Assay:
         self.complement_end_th = data[f'PRIMER_PAIR_{ ix }_COMPL_END_TH']
         self.amplicon_bp = data[f'PRIMER_PAIR_{ ix }_PRODUCT_SIZE']
         self.amplicon = sequence_template[
-            self.left['start']:(1 + self.right['end'])
+            self.left['start']:(self.right['end'])
         ]
         self.amplicon_inner = self.amplicon[
             self.left['length']:(-1 * self.right['length'])
         ]
-        self.probe = {}
-        self.probes = []
+        self.probes = self.get_probes()
+
+    def get_probes(self):
+        """Match assay to UPL probes."""
+        def get_distance(probe):
+            """Return probe distance."""
+            return probe['distance']
+
+        def get_probe_distance(self, probe):
+            """Return the minimum distance of probe from amplicon 5' or 3'."""
+            inner_start = self.amplicon_inner.find(probe)
+            inner_end = inner_start + len(probe)
+            return min([
+                inner_start,
+                len(self.amplicon_inner) - inner_end
+            ])
+
+        probes = []
+
+        for probe_ix, probe in settings.UPL_PROBES.items():
+            if probe in self.amplicon_inner:
+                # Convert 0-index to 1-index
+                start = self.query.sequence.find(probe) + 1
+                distance = get_probe_distance(self, probe)
+                if distance < settings.MIN_PROBE_DISTANCE:
+                    continue
+                probes.append({
+                    'id': probe_ix,
+                    'sequence': probe,
+                    'start': start,
+                    'end': start + len(probe),
+                    'distance': distance,
+                })
+        return sorted(probes, key=get_distance, reverse=True)
+
+    def build(self):
+        """Return a list of assays generated from this build."""
+        return [
+                Assay(self, probe)
+                for probe in self.probes
+            ]
+
+
+class Assay:
+    """A PCR assay describing a set of primers and a probe."""
+
+    def __init__(self, builder, probe):
+        """Create the assay from the builder template."""
+        self.probe = probe
+        self.query = builder.query
+        self.index = builder.index
+        self.left = builder.left
+        self.right = builder.right
+        self.complement_any_th = builder.complement_any_th
+        self.complement_end_th = builder.complement_end_th
+        self.amplicon_bp = builder.amplicon_bp
+        self.amplicon = builder.amplicon
+        self.amplicon_inner = builder.amplicon_inner
 
     def __str__(self):
         """Return sequence alignment of the assay."""
-        if not self.probes:
-            return (
-                f"Primer left: {self.left['sequence']}"
-                f"\nPrimer right: {self.right['sequence']}"
-                f"\nAmplicon length: {self.amplicon_bp} nt"
-                f"\nAmplicon: {self.amplicon}"
-                "\nNo probes for this assay."
-            )
-        probe = self.probes[0]
+        probe = self.probe
         query_start_ix = max(self.left['start'] - 10, 0)
         query_end_ix = min(
             self.right['end'] + 10,
             len(self.query.sequence) - 1
         )
+        s1 = min(self.left['start'], 10)
+        s2 = probe['start'] - self.left['end'] - 1
+        s3 = self.right['start'] - probe['end']
         line2 = (
-            " " * 10
+            " " * s1
             + self.left['sequence']
-            + " " * probe['start']
-            + probe['sequence']
-            + " " * (self.right['start'] - probe['end'])
+            + " " * s2
+            + f'<span class="green">{probe["sequence"]}</span>'
+            + " " * s3
             + self.right['sequence']
         )
         line1 = (
-            " " * (line2.find(probe['sequence']) + 2)
-            + '#' + probe['id']
+            " " * (line2.find(probe['sequence']) - 18)
+            + f'<span class="green">#{probe["id"]}</span>'
         )
         line3 = self.query.sequence[query_start_ix:query_end_ix]
         line4 = (
@@ -313,16 +342,16 @@ class Assay:
         return '\n'.join([line1, line2, line3, line4])
 
 
-def parse_output(output):
-    """Parse string output from primer3 into useful properties."""
-    return [
-        Iteration(x)
-        for x in output.split('\n=\n')
-        if x.startswith('SEQUENCE_ID')
-    ]
-
-
 if __name__ == '__main__':
+
+    def parse_output(output):
+        """Parse string output from primer3 into useful properties."""
+        return [
+            Iteration(x)
+            for x in output.split('\n=\n')
+            if x.startswith('SEQUENCE_ID')
+        ]
+
     with open('primer3/example.out') as f:
         iterations = parse_output(f.read())
     probes = [

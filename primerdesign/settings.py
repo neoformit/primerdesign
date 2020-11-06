@@ -11,12 +11,62 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 import os
+import json
 from pathlib import Path
 from .logging.conf import LOGGING
 
 
+# Project paths
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+PRIMER3_PATH = os.path.join(
+    BASE_DIR,
+    'design',
+    'primer3',
+    'src',
+    'primer3_core'
+)
+PRIMER3_CONFIG_PATH = os.path.join(
+    BASE_DIR,
+    'design',
+    'primer3',
+    'src',
+    'primer3_config'
+)
+PRIMER3_INPUT_DIR = os.path.join(
+    BASE_DIR,
+    'design',
+    'primer3',
+    'input_files'
+)
+PROBE_SEQUENCE_PATH = os.path.join(
+    BASE_DIR,
+    'design',
+    'probes',
+    'roche_upl_sequences.json'
+)
+PATHS = [
+    ('PRIMER3_PATH', PRIMER3_PATH),
+    ('PRIMER3_INPUT_DIR', PRIMER3_INPUT_DIR),
+    ('PROBE_SEQUENCE_PATH', PROBE_SEQUENCE_PATH),
+]
+
+for name, path in PATHS:
+    assert os.path.exists(path), (
+        f"Path not found at settings.{name}:"
+        + f" { path }"
+    )
+
+### Parameters ###
+
+# Minimum nt distance between probe and primers
+MIN_PROBE_DISTANCE = 10
+
+# UPL probe sequences
+with open(PROBE_SEQUENCE_PATH) as f:
+    UPL_PROBES = json.load(f)
+
+# General config
 DEBUG = True
 SECRET_KEY = '&6zt9-fu%_%6l4y34lhjh4u*z+mda@wx6dzr3bx0ay3sqfy!w^'
 
@@ -109,43 +159,3 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-
-
-# Project paths
-PRIMER3_PATH = os.path.join(
-    BASE_DIR,
-    'design',
-    'primer3',
-    'src',
-    'primer3_core'
-)
-PRIMER3_CONFIG_PATH = os.path.join(
-    BASE_DIR,
-    'design',
-    'primer3',
-    'src',
-    'primer3_config'
-)
-PRIMER3_INPUT_DIR = os.path.join(
-    BASE_DIR,
-    'design',
-    'primer3',
-    'input_files'
-)
-PROBE_SEQUENCE_PATH = os.path.join(
-    BASE_DIR,
-    'design',
-    'probes',
-    'roche_upl_sequences.json'
-)
-PATHS = [
-    ('PRIMER3_PATH', PRIMER3_PATH),
-    ('PRIMER3_INPUT_DIR', PRIMER3_INPUT_DIR),
-    ('PROBE_SEQUENCE_PATH', PROBE_SEQUENCE_PATH),
-]
-
-for name, path in PATHS:
-    assert os.path.exists(path), (
-        f"Path not found at settings.{name}:"
-        + f" { path }"
-    )
