@@ -51,6 +51,15 @@ PATHS = [
     ('PROBE_SEQUENCE_PATH', PROBE_SEQUENCE_PATH),
 ]
 
+if not os.path.exists(PRIMER3_INPUT_DIR):
+    try:
+        os.mkdir(PRIMER3_INPUT_DIR)
+    except:
+        raise FileNotFoundError(
+            'Failed to create directory for input files at '
+            + PRIMER3_INPUT_DIR
+        )
+
 for name, path in PATHS:
     assert os.path.exists(path), (
         f"Path not found at settings.{name}:"
@@ -159,3 +168,4 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'primerdesign', 'static')

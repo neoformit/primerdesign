@@ -1,7 +1,3 @@
 django==3.1
-subprocess
-string
-random
-json
 pathlib
 gunicorn

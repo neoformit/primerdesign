@@ -1,0 +1,131 @@
+body {
+  color: #dddddd;
+  background-color: #252b28;
+  padding: 50px;
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 100px;
+}
+footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  padding-top: 50px;
+  text-align: center;
+}
+footer img {
+  display: inline;
+  height: 2rem;
+}
+h1 {
+  text-align: center;
+  margin-bottom: 50px;
+}
+small {
+  font-size: 1rem;
+}
+a.probe-id, span.probe-id {
+  color: white;
+  background-color: forestgreen;
+  padding: 5px 10px;
+  margin: 10px;
+  border-radius: 10px;
+}
+a.probe-id {
+  cursor: pointer;
+  line-height: 3;
+  transition-duration: 0.25s;
+}
+a.probe-id:hover {
+  background-color: green;
+}
+.small {
+  font-size: 1rem;
+}
+.smaller {
+  font-size: 75%;
+}
+.bigger {
+  font-size: 175%;
+}
+.mono {
+  font-family: monospace;
+}
+.bright {
+  color: white;
+}
+.muted {
+  opacity: 0.5;
+}
+.green {
+  color: lawngreen;
+}
+.heading {
+  font-size: 1.5rem;
+  margin: 25px 15px;
+  padding: 15px;
+}
+.result {
+  background-color: #353b38;
+  border-radius: 15px;
+  margin: 15px;
+  padding: 15px;
+}
+.assay {
+  margin: 15px;
+  padding: 15px;
+  background-color: #282c2a;
+  border-radius: 15px;
+  border: 1px solid #555555;
+}
+.assay table {
+  width: 100%;
+  margin: 25px 0;
+  table-layout: fixed;
+}
+.assay th {
+  font-weight: bold;
+  background-color: #555555;
+}
+.assay td, .assay th {
+  width: 15%;
+  color: white;
+  padding: 2px 5px;
+  word-wrap: break-word;
+  vertical-align: middle;
+}
+.assay th.sequence {
+  width: 25%;
+}
+.assay td.sequence {
+  width: 25%;
+  font-family: monospace;
+}
+.assay td.space {
+  height: 25px;
+}
+.assay pre {
+  color: white;
+  padding: 15px 5px;
+  font-family: monospace;
+  background-color: #454b48;
+}
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  cursor: pointer;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px #aaa;
+  border-radius: 5px;
+  background-color: #444444;
+}
+::-webkit-scrollbar-thumb {
+  background: #888888;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #aaaaaa;
+}
