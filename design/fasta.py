@@ -89,10 +89,19 @@ class Fasta:
         fas = {}
         copy = False
 
+        if '>' not in string:
+            # Not FASTA formatted. Parse as single sequence.
+            residue = 0
+            title = "Anonymous sequence"
+            seq = string.replace(' ', '').replace('\n', '').replace('\r', '')
+            if valid_dna(title, residue, seq):
+                fas[title] = seq.upper()
+                return Cls(fas)
+
         for line in string.split('\n'):
             if line.startswith('>'):
                 if copy:
-                    fas[title] = seq
+                    fas[title] = seq.upper()
                 title = line.strip(">\n\r ").replace(' ', '_')
                 copy = True
                 seq = ""

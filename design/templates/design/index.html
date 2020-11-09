@@ -67,57 +67,55 @@
             </h3>
             <br>
 
-            <!-- Need to set min/max for all these params -->
-
             <h4> Primer length (nt) </h4>
             <label for="primer_optimum"> Optimum </label>
             {{ form.primer_optimum.errors }}
-            <input type="number" name="primer_optimum" value="{{ form.primer_optimum.value }}" required/>
+            <input type="number" name="primer_optimum" value="{{ form.primer_optimum.value }}" max=35 required/>
             <label for="primer_min"> Min </label>
             {{ form.primer_min.errors }}
-            <input type="number" name="primer_min" value="{{ form.primer_min.value }}" required/>
+            <input type="number" name="primer_min" value="{{ form.primer_min.value }}" max=35 required/>
             <label for="primer_max"> Max </label>
             {{ form.primer_max.errors }}
-            <input type="number" name="primer_max" value="{{ form.primer_max.value }}" required/>
+            <input type="number" name="primer_max" value="{{ form.primer_max.value }}" max=35 required/>
           </div>
 
           <div class="form-group">
             <h4> Amplicon length (nt) </h4>
             <label for="amplicon_min"> Min </label>
             {{ form.amplicon_min.errors }}
-            <input type="number" name="amplicon_min" value="{{ form.amplicon_min.value }}" required/>
+            <input type="number" name="amplicon_min" value="{{ form.amplicon_min.value }}" min="50" max=20000/>
             <label for="amplicon_max"> Max </label>
             {{ form.amplicon_max.errors }}
-            <input type="number" name="amplicon_max" value="{{ form.amplicon_max.value }}" required/>
+            <input type="number" name="amplicon_max" value="{{ form.amplicon_max.value }}" min="50" max=20000/>
           </div>
 
           <div class="form-group">
             <h4> Melting temperate (&#176;C) </h4>
             <label for="tm_optimum"> Optimum </label>
             {{ form.tm_optimum.errors }}
-            <input type="number" name="tm_optimum" value="{{ form.tm_optimum.value }}" required/>
+            <input type="number" name="tm_optimum" value="{{ form.tm_optimum.value }}" min=0 max=100 required/>
             <label for="tm_min"> Min </label>
             {{ form.tm_min.errors }}
-            <input type="number" name="tm_min" value="{{ form.tm_min.value }}" required/>
+            <input type="number" name="tm_min" value="{{ form.tm_min.value }}" min=0 max=100 required/>
             <label for="tm_max"> Max </label>
             {{ form.tm_max.errors }}
-            <input type="number" name="tm_max" value="{{ form.tm_max.value }}" required/>
+            <input type="number" name="tm_max" value="{{ form.tm_max.value }}" min=0 max=100 required/>
           </div>
 
           <div class="form-group">
             <h4> Annealing properties </h4>
             <label for="gc_min"> GC min % </label>
             {{ form.gc_min.errors }}
-            <input type="number" name="gc_min" value="{{ form.gc_min.value }}" required/>
+            <input type="number" name="gc_min" value="{{ form.gc_min.value }}" min=0 max=100 required/>
             <label for="gc_clamp"> GC clamp </label>
             {{ form.gc_clamp.errors }}
-            <input type="number" name="gc_clamp" value="{{ form.gc_clamp.value }}" required/>
+            <input type="number" name="gc_clamp" value="{{ form.gc_clamp.value }}" max=30 required/>
             <label for="self_dimer_any"> Self-dimer (any) </label>
             {{ form.self_dimer_any.errors }}
-            <input type="number" name="self_dimer_any" value="{{ form.self_dimer_any.value }}" required/>
+            <input type="number" name="self_dimer_any" value="{{ form.self_dimer_any.value }}" min=0 max=9999.99 required/>
             <label for="self_dimer_end"> Self-dimer (3') </label>
             {{ form.self_dimer_end.errors }}
-            <input type="number" name="self_dimer_end" value="{{ form.self_dimer_end.value }}" required/>
+            <input type="number" name="self_dimer_end" value="{{ form.self_dimer_end.value }}" min=0 max=9999.99 required/>
           </div>
         </div>
 
