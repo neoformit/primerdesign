@@ -9,7 +9,7 @@ make
 
 printf "\nRunning tests...\n"
 result=`make test | grep -v "Testing completed" | grep -i failed`
-if [[ result != '' ]]; then
+if [[ `$result | xargs` != '' ]]; then
     echo "Result:"
     echo "$result"
     printf "\nPrimer3 build tests failed\n"
