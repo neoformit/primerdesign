@@ -7,8 +7,6 @@ https://primer3.org/manual.html#globalTags
 from django import forms
 from .fasta import Fasta
 
-# # TODO: You just put in form validation and didnt test it. Especially the size ranges bit!
-
 
 class PrimerForm(forms.Form):
     """Collect user input to run primer prediction."""
@@ -20,9 +18,9 @@ class PrimerForm(forms.Form):
     primer_optimum = forms.IntegerField(initial=20, max_value=35)
     # Amplicon size range
     amplicon_min = forms.IntegerField(
-        initial=50, min_value=50, max_value=20000)
+        initial=60, min_value=50, max_value=20000)
     amplicon_max = forms.IntegerField(
-        initial=150, min_value=50, max_value=20000)
+        initial=80, min_value=50, max_value=20000)
     # Primer melting temperature range
     tm_min = forms.FloatField(initial=59, min_value=0, max_value=100)
     tm_max = forms.FloatField(initial=61, min_value=0, max_value=100)
