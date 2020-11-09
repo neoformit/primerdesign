@@ -1,6 +1,7 @@
 """A wrapper around the primer3 software."""
 
 import os
+import time
 import string
 import random
 import subprocess
@@ -73,6 +74,9 @@ class PrimerDesign:
         """Parse the target parameters to a primer3 input file."""
         def get_size_range(params):
             """Calculate valid Primer3 size range from amplicon min/max."""
+            if not params['amplicon_min']:
+                return
+
             selected = []
             for size in PRODUCT_SIZE_RANGES:
                 if params['amplicon_min'] > size[1]:
@@ -81,6 +85,8 @@ class PrimerDesign:
                     break
                 selected.append('-'.join([str(x) for x in size]))
             return ' '.join(selected)
+
+        logger.info(f'Running primer3 with input sequence:\n{params["fasta"]}')
 
         alphanumeric = string.ascii_letters + string.digits
         input_path = os.path.join(
@@ -115,7 +121,7 @@ class PrimerDesign:
                     + '\n' + exc.stdout.decode('utf-8')
                     + '\n' + exc.stderr.decode('utf-8')
                 )
-        os.remove(input_path)
+        clean_input_files(input_path)
         return [
             Iteration(x)
             for x in result.stdout.decode('utf-8').split('\n=\n')
@@ -289,6 +295,10 @@ class AssayBuilder:
                     start = self.query.sequence.find(probe) + 1
                     distance = get_probe_distance(self, probe)
                     if distance < settings.MIN_PROBE_DISTANCE:
+                        logger.info(
+                            "Rejecting assay matching probe # {probe_ix}"
+                            + f" at distance of {distance} nt"
+                        )
                         continue
                     probes.append({
                         'id': probe_ix,
@@ -353,6 +363,15 @@ class Assay:
             + str(query_end_ix)
         )
         return '\n'.join([line1, line2, line3, line4])
+
+
+def clean_input_files(new_path):
+    """Clean files from directory older than 1 hour."""
+    parent = os.path.dirname(new_path)
+    for f in os.listdir(parent):
+        path = os.path.join(parent, f)
+        if time.time() - os.path.getmtime(path) > 3600:
+            os.remove(path)
 
 
 if __name__ == '__main__':
