@@ -406,7 +406,6 @@ def clean_input_files(new_path):
 
 
 if __name__ == '__main__':
-
     def reverse_comp(sequence):
         """Return reverse complement of sequence."""
         COMP = {
