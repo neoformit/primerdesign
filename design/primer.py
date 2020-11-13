@@ -134,9 +134,9 @@ class PrimerDesign:
             )
         clean_input_files(input_path)
 
-        out = os.path.join(settings.BASE_DIR, 'design', 'primer3.out')
-        with open(out, 'w') as f:
-            f.write(result.stdout.decode('utf-8') + '\n')
+        # out = input_path.replace('.conf', '.out')
+        # with open(out, 'w') as f:
+        #     f.write(result.stdout.decode('utf-8') + '\n')
 
         return [
             Iteration('SEQUENCE_ID=' + x)

@@ -43,9 +43,16 @@
 
       {% if result.iterations %}
 
+      <div class="container text-center">
+        {% for query in result %}
+        <a class="query-id" href="#query-{{ forloop.counter }}">
+          Query #{{ forloop.counter }}
+        </a>
+        {% endfor %}
+      </div>
 
       {% for query in result %}
-      <div class="result">
+      <div class="result" id="query-{{ forloop.counter }}">
         <p class="heading bright">
           Query #{{ forloop.counter }}: {{ query.name }} <br><br>
           <span class="smaller">

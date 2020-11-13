@@ -26,6 +26,23 @@ h1 {
 small {
   font-size: 1rem;
 }
+a.query-id {
+  color: white;
+  font-size: 1.5rem;
+  background-color: darkblue;
+  padding: 10px 20px;
+  margin: 10px 20px;
+  border-radius: 15px;
+}
+a.query-id {
+  cursor: pointer;
+  line-height: 5;
+  transition-duration: 0.25s;
+}
+a.query-id:hover {
+  text-decoration: none;
+  background-color: mediumblue;
+}
 a.probe-id, span.probe-id {
   color: white;
   background-color: forestgreen;
@@ -39,7 +56,8 @@ a.probe-id {
   transition-duration: 0.25s;
 }
 a.probe-id:hover {
-  background-color: green;
+  text-decoration: none;
+  background-color: #00a800;
 }
 .small {
   font-size: 1rem;
