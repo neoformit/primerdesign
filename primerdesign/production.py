@@ -6,6 +6,7 @@ from pathlib import Path
 from .settings import *
 
 DEBUG = False
+PRIMER3_DEBUG = False
 
 ALLOWED_HOSTS = [
     'localhost',

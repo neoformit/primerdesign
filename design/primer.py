@@ -134,9 +134,10 @@ class PrimerDesign:
             )
         clean_input_files(input_path)
 
-        # out = input_path.replace('.conf', '.out')
-        # with open(out, 'w') as f:
-        #     f.write(result.stdout.decode('utf-8') + '\n')
+        if settings.PRIMER3_DEBUG:
+            out = input_path.replace('.conf', '.out')
+            with open(out, 'w') as f:
+                f.write(result.stdout.decode('utf-8') + '\n')
 
         return [
             Iteration('SEQUENCE_ID=' + x)
@@ -389,11 +390,11 @@ class Assay:
 
 def clean_input_files(new_path):
     """Clean files from directory older than 1 hour."""
-    parent = os.path.dirname(new_path)
-    for f in os.listdir(parent):
-        path = os.path.join(parent, f)
-        if time.time() - os.path.getmtime(path) > 3600:
-            os.remove(path)
+    for temp_dir in (settings.PRIMER3_INPUT_DIR, settings.PRIMER3_OUTPUT_DIR):
+        for f in os.listdir(temp_dir):
+            path = os.path.join(temp_dir, f)
+            if time.time() - os.path.getmtime(path) > 3600:
+                os.remove(path)
 
 
 if __name__ == '__main__':

@@ -55,6 +55,8 @@
       <div class="result" id="query-{{ forloop.counter }}">
         <p class="heading bright">
           Query #{{ forloop.counter }}: {{ query.name }} <br><br>
+
+          {% if query.assays|length %}
           <span class="smaller">
             {{ query.assays|length|apnumber|title }} potential assays were found for
             <span class="green"> UPL probes: </span>
@@ -62,6 +64,12 @@
             <a class="probe-id" href="#probe-{{probe_id}}"> #{{ probe_id }} </a>
             {% endfor %}
           </span>
+          {% else %}
+          <span>
+            Sorry, no potential assays were found for this sequence
+          </span>
+          {% endif %}
+
         </p>
 
         {% for assay in query.assays %}
