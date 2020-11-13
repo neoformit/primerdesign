@@ -5,6 +5,8 @@ body {
   position: relative;
   min-height: 100vh;
   padding-bottom: 100px;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 footer {
   position: absolute;
@@ -79,4 +81,21 @@ div.submit {
 footer img {
   display: inline;
   height: 2rem;
+}
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 20px;
+  cursor: pointer;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px #aaa;
+  border-radius: 5px;
+  background-color: #444444;
+}
+::-webkit-scrollbar-thumb {
+  background: #888888;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #aaaaaa;
 }
