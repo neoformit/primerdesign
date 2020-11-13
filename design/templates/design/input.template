@@ -18,9 +18,7 @@ PRIMER_PRODUCT_SIZE_RANGE={{ amplicon_min }}-{{ amplicon_max }}
 PRIMER_PRODUCT_MAX={{ amplicon_max }}
 P3_FILE_FLAG=0
 PRIMER_EXPLAIN_FLAG=1
-PRIMER_THERMODYNAMIC_PARAMETERS_PATH={{ conf_path }}
-={% for name, template in fasta.items %}
+PRIMER_THERMODYNAMIC_PARAMETERS_PATH={{ conf_path }}{% for name, template in fasta.items %}
 SEQUENCE_ID={{ name }}
 SEQUENCE_TEMPLATE={{ template }}
-=
-{% endfor %}
+={% endfor %}

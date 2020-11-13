@@ -48,14 +48,31 @@ class PrimerDesign:
         """Run primer3 with the given target sequences and render output."""
         self.params = params
         self.iterations = self.run(params)
+        self.total_assay_count = sum([
+            len(iteration.assays)
+            for iteration in self.iterations
+        ])
 
     def __str__(self):
         """Render entire result to string."""
         out = []
         for i, query in enumerate(self.iterations):
-            out.append(f"Query #{i + 1}: {query.name}\n")
-            out += [str(assay) for assay in query.assays]
+            out.append(
+                f"\nQuery #{i + 1}: {query.name}\n"
+                + f"    - Considered {query.assays_considered} assays\n"
+                + f"    - Rejected {query.assays_rejected} assays\n"
+            )
+            # for further debugging:
+            # out += [
+            #     str(assay).replace(
+            #         '<span class="green">', '').replace('</span>', '')
+            #     for assay in query.assays
+            # ]
         return '\n\n'.join(out)
+
+    def __len__(self):
+        """Return number of iterations."""
+        return len(self.iterations)
 
     def __iter__(self):
         """Iterate through result sequences."""
@@ -86,8 +103,6 @@ class PrimerDesign:
                 selected.append('-'.join([str(x) for x in size]))
             return ' '.join(selected)
 
-        logger.info(f'Running primer3 with input sequence:\n{params["fasta"]}')
-
         alphanumeric = string.ascii_letters + string.digits
         input_path = os.path.join(
             settings.PRIMER3_INPUT_DIR,
@@ -112,20 +127,20 @@ class PrimerDesign:
         try:
             result = subprocess.run(args, check=True, capture_output=True)
         except Exception as exc:
-            if exc.returncode == 252:
-                # "PRIMER_ERROR=Missing SEQUENCE tag" ... don't know why
-                result = exc
-            else:
-                raise RuntimeError(
-                    f"Primer3 returned error code {exc.returncode}. Output:"
-                    + '\n' + exc.stdout.decode('utf-8')
-                    + '\n' + exc.stderr.decode('utf-8')
-                )
+            raise RuntimeError(
+                f"Primer3 returned error code {exc.returncode}. Output:"
+                + '\n' + exc.stdout.decode('utf-8')
+                + '\n' + exc.stderr.decode('utf-8')
+            )
         clean_input_files(input_path)
+
+        out = os.path.join(settings.BASE_DIR, 'design', 'primer3.out')
+        with open(out, 'w') as f:
+            f.write(result.stdout.decode('utf-8') + '\n')
+
         return [
-            Iteration(x)
-            for x in result.stdout.decode('utf-8').split('\n=\n')
-            if x.startswith('SEQUENCE_ID')
+            Iteration('SEQUENCE_ID=' + x)
+            for x in result.stdout.decode('utf-8').split('SEQUENCE_ID=')[1:]
         ]
 
 
@@ -137,7 +152,10 @@ class Iteration:
         data = {
             line.split('=')[0]: line.split('=')[1]
             for line in output.split('\n')
+            if '=' in line
         }
+        self.assays_rejected = 0
+        self.assays_considered = 0
         self.name = data['SEQUENCE_ID']
         self.sequence = data['SEQUENCE_TEMPLATE']
         self.explanation = {
@@ -292,13 +310,11 @@ class AssayBuilder:
             for probe in [probe_seq, reverse_complement(probe_seq)]:
                 if probe in self.amplicon_inner:
                     # Convert 0-index to 1-index
+                    self.query.assays_considered += 1
                     start = self.query.sequence.find(probe) + 1
                     distance = get_probe_distance(self, probe)
                     if distance < settings.MIN_PROBE_DISTANCE:
-                        logger.info(
-                            "Rejecting assay matching probe # {probe_ix}"
-                            + f" at distance of {distance} nt"
-                        )
+                        self.query.assays_rejected += 1
                         continue
                     probes.append({
                         'id': probe_ix,

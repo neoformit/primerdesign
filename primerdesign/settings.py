@@ -16,6 +16,10 @@ from pathlib import Path
 from .logging.conf import LOGGING
 
 
+# Parameters
+# Minimum nt distance between probe and primers
+MIN_PROBE_DISTANCE = 8
+
 # Project paths
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -54,7 +58,7 @@ PATHS = [
 if not os.path.exists(PRIMER3_INPUT_DIR):
     try:
         os.mkdir(PRIMER3_INPUT_DIR)
-    except:
+    except Exception:
         raise FileNotFoundError(
             'Failed to create directory for input files at '
             + PRIMER3_INPUT_DIR
@@ -65,11 +69,6 @@ for name, path in PATHS:
         f"Path not found at settings.{name}:"
         + f" { path }"
     )
-
-### Parameters ###
-
-# Minimum nt distance between probe and primers
-MIN_PROBE_DISTANCE = 10
 
 # UPL probe sequences
 with open(PROBE_SEQUENCE_PATH) as f:

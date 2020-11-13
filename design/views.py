@@ -15,6 +15,9 @@ def index(request):
         form = PrimerForm(request.POST)
         if form.is_valid():
             result = PrimerDesign(form.cleaned_data)
+            print(
+                f"Assay Design returned {len(result)} results"
+                f" with {result.total_assay_count} assays:\n{result}")
             return render(request, 'design/result.html', {
                 'result': result
             })
