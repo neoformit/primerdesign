@@ -26,7 +26,7 @@ with open(PROBE_SEQUENCE_PATH) as f:
 
 # General config
 DEBUG = True
-PRIMER3_DEBUG = True
+PRIMER3_DEBUG = False
 SECRET_KEY = '&6zt9-fu%_%6l4y34lhjh4u*z+mda@wx6dzr3bx0ay3sqfy!w^'
 
 ALLOWED_HOSTS = [
