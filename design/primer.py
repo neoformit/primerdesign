@@ -309,18 +309,24 @@ class AssayBuilder:
         for probe_ix, probe_seq in settings.UPL_PROBES.items():
             for probe in [probe_seq, reverse_complement(probe_seq)]:
                 if probe in self.amplicon_inner:
-                    # Convert 0-index to 1-index
                     self.query.assays_considered += 1
-                    start = self.query.sequence.find(probe) + 1
+                    probe_start = (
+                        self.left['end']
+                        + self.amplicon_inner.find(probe) + 1
+                    )
                     distance = get_probe_distance(self, probe)
                     if distance < settings.MIN_PROBE_DISTANCE:
                         self.query.assays_rejected += 1
                         continue
+                    if self.amplicon_inner.count(probe) > 1:
+                        self.query.assays_rejected += 1
+                        logger.info('Rejected assay: multiple probe sites')
+                        continue
                     probes.append({
                         'id': probe_ix,
                         'sequence': probe,
-                        'start': start,
-                        'end': start + len(probe),
+                        'start': probe_start,
+                        'end': probe_start + len(probe),
                         'distance': distance,
                     })
         return sorted(probes, key=get_distance, reverse=True)
