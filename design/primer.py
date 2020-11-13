@@ -62,12 +62,12 @@ class PrimerDesign:
                 + f"    - Considered {query.assays_considered} assays\n"
                 + f"    - Rejected {query.assays_rejected} assays\n"
             )
-            # for further debugging:
-            # out += [
-            #     str(assay).replace(
-            #         '<span class="green">', '').replace('</span>', '')
-            #     for assay in query.assays
-            # ]
+            if settings.PRIMER3_DEBUG:
+                out += [
+                    str(assay).replace(
+                        '<span class="green">', '').replace('</span>', '')
+                    for assay in query.assays
+                ]
         return '\n\n'.join(out)
 
     def __len__(self):
@@ -111,6 +111,11 @@ class PrimerDesign:
                 for i in range(12)
             ])
         )
+        if settings.PRIMER3_DEBUG:
+            logger.info(
+                'Running primer3 input: '
+                + os.path.basename(input_path)
+            )
         params['product_size_range'] = get_size_range(params)
         params['conf_path'] = settings.PRIMER3_CONFIG_PATH
         with open(input_path, 'w') as f:
@@ -135,7 +140,10 @@ class PrimerDesign:
         clean_input_files(input_path)
 
         if settings.PRIMER3_DEBUG:
-            out = input_path.replace('.conf', '.out')
+            out = os.path.join(
+                settings.PRIMER3_OUTPUT_DIR,
+                os.path.basename(input_path).replace('.conf', '.out')
+            )
             with open(out, 'w') as f:
                 f.write(result.stdout.decode('utf-8') + '\n')
 

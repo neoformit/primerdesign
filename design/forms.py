@@ -5,6 +5,8 @@ https://primer3.org/manual.html#globalTags
 """
 
 from django import forms
+from django.core.exceptions import ValidationError
+
 from .fasta import Fasta
 
 
@@ -39,11 +41,16 @@ class PrimerForm(forms.Form):
         """Validate and return user input."""
         data = self.cleaned_data
         data['fasta'] = Fasta.from_string(data['fasta'])
-
-        if data['amplicon_min'] or data['amplicon_max']:
-            if not data['amplicon_min']:
-                data['amplicon_min'] = 0
-            if not data['amplicon_max']:
-                data['amplicon_max'] = 20000
-
+        validate_fasta(data)
         return data
+
+
+def validate_fasta(data):
+    """Validate input sequence lengths."""
+    for sequence in data['fasta'].values():
+        print(f'Sequence length {len(sequence)} nt')
+        if len(sequence) < data['amplicon_min']:
+            raise ValidationError({'fasta':
+                f'Input sequence must be longer than minimum'
+                + f' amplicon length parameter ({data["amplicon_min"]} nt)'
+            })
