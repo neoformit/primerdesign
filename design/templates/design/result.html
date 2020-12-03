@@ -150,6 +150,19 @@
 
     <script src="{% static 'design/js/jquery-3.5.1.slim.min.js' %}"></script>
     <script src="{% static 'design/js/bootstrap.min.js' %}"></script>
+
+    <script type="text/javascript">
+
+    document.addEventListener('copy', function(e) {
+      const text_only = document.getSelection().toString();
+      const clipdata = e.clipboardData || window.clipboardData;
+      clipdata.setData('text/plain', text_only);
+      clipdata.setData('text/html', text_only);
+      e.preventDefault();
+    });
+
+    </script>
+
   </body>
 
 </html>
