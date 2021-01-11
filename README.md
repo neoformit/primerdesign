@@ -1,7 +1,7 @@
 # ProbeDesign
 Design primers to use with Roche's fluorescent probe libraries
 
-Check out a running example at [primers.neoformit.com](http://primers.neoformit.com/)
+Check it out at [primers.neoformit.com](http://primers.neoformit.com/)
 
 
 Development setup
@@ -29,8 +29,10 @@ Run development server (`--insecure` allows local static file serving)
 Production deployment
 ------
 
-This get a little more complex due to setting up the webserver etc.
+This is a little more complex due to setting up a webserver.
 
-I'm currently running this with Nginx reverse-proxying for Gunicorn.
+No need to do anything "fancy" in the server config as it's a single-page app with short request times.
 
-It doesn't need anything special in the server config as it's a single-page app with short request times.
+I'm currently running this with Nginx reverse-proxying for Gunicorn (see `gunicorn.py`).
+
+One day I might get around to making a `setup.py` here for easy install/deploy
