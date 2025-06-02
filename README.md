@@ -1,11 +1,12 @@
-# ProbeDesign
-Design primers to use with Roche's fluorescent probe libraries
+# Primer design tool
+
+Design primers to use with Roche's discontinued Universal Probe Library. This
+app replaces their assay design center which is now offline.
 
 Check it out at [primers.neoformit.com](http://primers.neoformit.com/)
 
 
-Development setup
-------
+## Development setup
 
 > Tested on Linux Ubuntu 20.04 with Python 3.8 runtime
 
@@ -14,7 +15,7 @@ Development setup
 Clone the repo to home directory and install dependancies:
 
 ```bash
-git clone https://github.com/pluckthechicken/primerdesign.git
+git clone https://github.com/neoformit/primerdesign.git
 cd primerdesign
 pip install requirements.txt
 python manage.py migrate

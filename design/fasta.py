@@ -8,11 +8,11 @@ logger = logging.getLogger('django')
 DNA = {'A', 'T', 'G', 'C'}
 
 
-def valid_dna(title, residue, sequence):
+def valid_dna(sequence, title):
     """Assert that sequence string is valid DNA."""
     if len(set(sequence) - DNA):
         invalid = list(set(sequence) - DNA)[0]
-        position = residue + sequence.index(invalid) + 1
+        position = sequence.index(invalid) + 1
         msg = (
             f'Sequence "{title}": Invalid DNA residue "{invalid}"'
             + f' at position {position}'
@@ -83,7 +83,6 @@ class Fasta:
     @classmethod
     def from_string(Cls, string):
         """Read in from string and parse to dict."""
-        residue = 0
         seq = ""
         title = ""
         fas = {}
@@ -91,25 +90,27 @@ class Fasta:
 
         if '>' not in string:
             # Not FASTA formatted. Parse as single sequence.
-            residue = 0
             title = "Anonymous sequence"
-            seq = string.replace(' ', '').replace('\n', '').replace('\r', '')
-            if valid_dna(title, residue, seq):
-                fas[title] = seq.upper()
+            seq = (
+                string.replace(' ', '')
+                .replace('\n', '')
+                .replace('\r', '')
+                .upper()
+            )
+            if valid_dna(seq, title):
+                fas[title] = seq
                 return Cls(fas)
 
         for line in string.split('\n'):
             if line.startswith('>'):
-                if copy:
-                    fas[title] = seq.upper()
+                if copy and valid_dna(seq, title):
+                    fas[title] = seq
                 title = line.strip(">\n\r ").replace(' ', '_')
                 copy = True
                 seq = ""
             else:
                 line = line.strip("\n\r ")
-                if valid_dna(title, residue, line):
-                    seq += line
-                    residue += len(line)
+                seq += line.upper()
 
         # Ensure duplicate fasta titles don't get overwritten
         i = 1
@@ -122,13 +123,24 @@ class Fasta:
 
 if __name__ == '__main__':
     fasta_str = (
-        '>part of X00351 Human mRNA for beta-actin\r\n'
         'CACGGCATCGTCACCAACTGGGACGACATGGAGAAAATCTGGCACCACACCTTCTACAATGAGCTGCGTGTGGCTCCCGA\r\n'
         'GGAGCACCCCGTGCTGCTGACCGAGGCCCCCCTGAACCCCAAGGCCAACCGCGAGAAGATGACCCAGATCATGTTTGAGA\r\n'
         'CCTTCAACACCCCAGCCATGTACGTTGCTATCCAGGCTGTGCTATCCCTGTACGCCTCTGGCCGTACCACTGGCATCGTG\r\n'
         'ATGGACTCCGGTGACGGGGTCACCCACACTGTGCCCATCTACGAGGGGTATGCCCTCCCC'
     )
     fas = Fasta.from_string(fasta_str)
+    print(fas)
     for key, seq in fas.items():
         assert seq in fasta_str.replace('\r\n', '')
+
+    fasta_str = (
+        '>part of X00351 Human mRNA for beta-actin\r\n'
+        + fasta_str.lower()
+    )
+    fas = Fasta.from_string(fasta_str)
     print(fas)
+    for key, seq in fas.items():
+        expected_seq = fasta_str.replace('\r\n', '').upper()
+        assert seq in expected_seq, (
+            f"This:\n{seq}\nIs not in:\n{expected_seq}"
+        )
